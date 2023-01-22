@@ -1,0 +1,694 @@
+{
+	"info": {
+		"_postman_id": "630c8a88-3ed3-41c5-8711-8759da373a59",
+		"name": "Reqres API Testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8582397"
+	},
+	"item": [
+		{
+			"name": "List Users",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//create collection variable for reqres domain",
+							"//key and value",
+							"pm.collectionVariables.set(\"url_reqres\",\"https://reqres.in/\");",
+							"",
+							"//create a local variable for page number",
+							"pm.collectionVariables.set(\"page_no\", \"2\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//validate status code",
+							"pm.test(\"Check status code - 200\", ()=> {",
+							"    pm.response.to.have.status(200);",
+							"})",
+							"",
+							"//get the response to an object",
+							"var jsonOutput = pm.response.json();",
+							"",
+							"//validate user first name ",
+							"//create an object ",
+							"pm.test(\"check user id 7 first name is Michael\", ()=> {",
+							"    pm.expect(jsonOutput.data[0].first_name).to.eql(\"Michael\");",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url_reqres}}api/users?page={{page_no}}",
+					"host": [
+						"{{url_reqres}}api"
+					],
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "{{page_no}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a Single User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//validate status code",
+							"pm.test(\"Check status code is 200\", ()=> {",
+							"    pm.response.to.have.status(200);",
+							"})",
+							"",
+							"//save response",
+							"var jsondata = pm.response.json();",
+							"",
+							"//validate user email",
+							"pm.test(\"validate user email\", ()=> {",
+							"    pm.expect(jsondata.data.email).to.eql(\"janet.weaver@reqres.in\");",
+							"})",
+							"//validate user full name",
+							"pm.test(\"validate user full name\", ()=> {",
+							"    pm.expect(jsondata.data.first_name + \" \" + jsondata.data.last_name)",
+							"    .to.eql(\"Janet Weaver\");",
+							"})",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url_reqres}}api/users/2",
+					"host": [
+						"{{url_reqres}}api"
+					],
+					"path": [
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Single User not found",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//validate status code",
+							"pm.test(\"check status code is 404\", ()=> {",
+							"    pm.response.to.have.status(404);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url_reqres}}api/users/23",
+					"host": [
+						"{{url_reqres}}api"
+					],
+					"path": [
+						"users",
+						"23"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get List of Users unknown resource",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//variable for - unknown resource",
+							"pm.collectionVariables.set(\"unknown_resource\", \"unknown\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//validate status code",
+							"pm.test(\"check status code is 200\", ()=> {",
+							"    pm.response.to.have.status(200);",
+							"})",
+							"",
+							"//save response",
+							"var jsonData = pm.response.json();",
+							"",
+							"//validate name of users",
+							"pm.test(\"check name of user id 1\", ()=> {",
+							"    pm.expect(jsonData.data[0].name).to.eql(\"cerulean\");",
+							"})",
+							"",
+							"//validate year",
+							"pm.test(\"check year of user\", ()=> {",
+							"    pm.expect(jsonData.data[1].year).to.eql(2001);",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url_reqres}}api/{{unknown_resource}}",
+					"host": [
+						"{{url_reqres}}api"
+					],
+					"path": [
+						"{{unknown_resource}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get SIngle User - Unknown Resource",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//validate status code",
+							"pm.test(\"check status code is 200\", ()=> {",
+							"    pm.response.to.have.status(200)",
+							"})",
+							"",
+							"//save response to json",
+							"var jsonData = pm.response.json();",
+							"",
+							"//validate user details of response",
+							"pm.test(\"validate name of the user\", ()=> {",
+							"    pm.expect(jsonData.data.name).to.eql(\"fuchsia rose\");",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url_reqres}}api/{{unknown_resource}}/2",
+					"host": [
+						"{{url_reqres}}api"
+					],
+					"path": [
+						"{{unknown_resource}}",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Single Resource - Not Found",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//validate status code",
+							"pm.test(\"check status code is 404\", ()=> {",
+							"    pm.response.to.have.status(404);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url_reqres}}api/{{unknown_resource}}/23",
+					"host": [
+						"{{url_reqres}}api"
+					],
+					"path": [
+						"{{unknown_resource}}",
+						"23"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//collection variables for users and job",
+							"//key and value",
+							"pm.collectionVariables.set(\"name\", \"John\");",
+							"pm.collectionVariables.set(\"job\", \"Driver\")"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//validate status code",
+							"pm.test(\"check status code is 201\", ()=> {",
+							"    pm.response.to.have.status(201);",
+							"})",
+							"",
+							"//save response",
+							"var jsonD = pm.response.json();",
+							"",
+							"//validate created user details",
+							"pm.test(\"check user name and job\", ()=> {",
+							"    pm.expect(jsonD.name).to.eql(pm.collectionVariables.get(\"name\"));",
+							"})",
+							"",
+							"//set collection variable to id",
+							"pm.collectionVariables.set(\"id\",jsonD.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\" : \"{{name}}\",\n    \"job\" : \"{{job}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_reqres}}api/users",
+					"host": [
+						"{{url_reqres}}api"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//create variables for useraname and job",
+							"pm.collectionVariables.set(\"username\",\"john\");",
+							"pm.collectionVariables.set(\"job_new\",\"carpenter\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//validate status code",
+							"pm.test(\"check status code is 200\", ()=> {",
+							"    pm.response.to.have.status(200);",
+							"})",
+							"",
+							"//save the response",
+							"var jsonData = pm.response.json();",
+							"",
+							"//validate the username and job",
+							"pm.test(\"validate name and job\", ()=> {",
+							"    pm.expect(jsonData.name).to.eql(pm.collectionVariables.get(\"username\"));",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\" : \"{{username}}\",\n    \"job\" : \"{{job_new}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_reqres}}api/users/{{id}}",
+					"host": [
+						"{{url_reqres}}api"
+					],
+					"path": [
+						"users",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"check status code is 204\", ()=> {",
+							"    pm.response.to.have.status(204);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url_reqres}}api/users/{{id}}",
+					"host": [
+						"{{url_reqres}}api"
+					],
+					"path": [
+						"users",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register New User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//variables for email and password",
+							"pm.collectionVariables.set(\"email\",\"eve.holt@reqres.in\");",
+							"pm.collectionVariables.set(\"password\", \"pistol\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//validate status code after registration",
+							"pm.test(\"check status code is 200\", ()=> {",
+							"    pm.response.to.have.status(200);",
+							"})",
+							"",
+							"//save response ",
+							"var jsonD = pm.response.json();",
+							"",
+							"//validate user details",
+							"pm.test(\"validate user details\", ()=> {",
+							"    pm.expect(jsonD.id).to.eql(\"4\");",
+							"})",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\" : \"{{email}}\",\n    \"password\" : \"{{password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_reqres}}api/register",
+					"host": [
+						"{{url_reqres}}api"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register User - unsuccessful",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//variable for email and missing password",
+							"pm.collectionVariables.set(\"email_new\", \"sydney@fife\");",
+							"pm.collectionVariables.set(\"error_msg\", \"Missing password\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//validate status code",
+							"pm.test(\"check status code is 400\", ()=> {",
+							"    pm.response.to.have.status(400);",
+							"})",
+							"",
+							"//save response",
+							"var jsonD = pm.response.json();",
+							"",
+							"//validate token",
+							"pm.test(\"check the token for registration\", ()=>{",
+							"    pm.expect(jsonD.error).to.eql(pm.collectionVariables.get(\"error_msg\"));",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{email_new}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_reqres}}api/register",
+					"host": [
+						"{{url_reqres}}api"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Login - successful",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//validate status code",
+							"pm.test(\"check status code is 200\", ()=> {",
+							"    pm.response.to.have.status(200);",
+							"})",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\" : \"{{email}}\",\n    \"password\" : \"{{password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_reqres}}api/users/login",
+					"host": [
+						"{{url_reqres}}api"
+					],
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Login - Unsuccessful",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//validate status code",
+							"pm.test(\"check status code is 400\", ()=> {",
+							"    pm.response.to.have.status(400);",
+							"})",
+							"",
+							"//save response",
+							"var jsonData = pm.response.json();",
+							"",
+							"//validate the error message",
+							"pm.test(\"validate error message\", ()=> {",
+							"    pm.expect(jsonData.error).to.eql(pm.collectionVariables.get(\"error_msg\"));",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\" : \"test@reqres.in\",\n    \"password\" : \"{{password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_reqres}}api/login",
+					"host": [
+						"{{url_reqres}}api"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "url_reqres",
+			"value": ""
+		},
+		{
+			"key": "page_no",
+			"value": ""
+		},
+		{
+			"key": "unknown_resource",
+			"value": ""
+		},
+		{
+			"key": "name",
+			"value": ""
+		},
+		{
+			"key": "job",
+			"value": ""
+		},
+		{
+			"key": "id",
+			"value": ""
+		},
+		{
+			"key": "username",
+			"value": ""
+		},
+		{
+			"key": "job_new",
+			"value": ""
+		},
+		{
+			"key": "email",
+			"value": ""
+		},
+		{
+			"key": "password",
+			"value": ""
+		},
+		{
+			"key": "email_new",
+			"value": ""
+		},
+		{
+			"key": "error_msg",
+			"value": ""
+		}
+	]
+}
